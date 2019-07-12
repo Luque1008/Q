@@ -12,6 +12,24 @@ class MA_family ():
             MA_seires.iloc[k] = sum(self.close_price.iloc[:k+1])/(k + 1)
         return MA_seires
 
+    def EMA(self):
+        import pandas as pd
+        assert num_days == self.close_series.shape[0]
+        EMA_series = pd.Series(range(self.num_days))
+        k = -1
+        for close_price in self.close_series:
+            if k == -1:
+                EMA = close_price
+                EMA_series.iloc[k + 1] = EMA
+                k += 1
+            else:
+                EMA = (2 * close_price + (self.num_days - 1) * EMA_series.iloc[k]) / (self.num_days + 1)
+                EMA_series.iloc[k + 1] = EMA
+                k += 1
+
+        return EMA_series
+
+
     def SMA(self, weight):
         '''
 
