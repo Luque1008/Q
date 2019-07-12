@@ -14,10 +14,10 @@ class MA_family ():
 
     def EMA(self):
         import pandas as pd
-        assert num_days == self.close_series.shape[0]
+        assert num_days == self.close_price.shape[0]
         EMA_series = pd.Series(range(self.num_days))
         k = -1
-        for close_price in self.close_series:
+        for close_price in self.close_price:
             if k == -1:
                 EMA = close_price
                 EMA_series.iloc[k + 1] = EMA
