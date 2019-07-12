@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 class MA_family ():
     def __init__(self, close_price, num_days: int ):
@@ -27,15 +27,16 @@ class MA_family ():
                     SMA_seires.iloc[k] = (weight*self.close_price.iloc[k] +
                                           (self.num_days-weight)*SMA_seires.iloc[k-1])/self.num_days
             return SMA_seires
-        else :
+        else:
             raise ValueError("weight must lower than Num_days")
 
     def DMA(self, turnover_rate):
-        '''
 
+        '''
         :param turnover_rate: 增加每天的换手率来代替权重
         :return: 返回一个DMA的seires
         '''
+
         turnover_rate = pd.Series(turnover_rate)
         if sum(turnover_rate > 1) == 0 :
             DMA_seires = pd.Series(range(self.num_days))
@@ -48,6 +49,26 @@ class MA_family ():
             return DMA_seires
         else :
             raise ValueError("All turnover_rate must lower than 1")
+
+    def TMA(self, weight_1, weight_2):
+        if weight_1 <1 & weight_2 < 1:
+            TMA_seires = pd.Series(range(self.num_days))
+            for k in range(self.num_days):
+                if k == 0:
+                    TMA_seires.iloc[k] = self.close_price.iloc[k] * weight_2
+                else:
+                    TMA_seires.iloc[k] = weight_1 * TMA_seires.iloc[k-1] + weight_2 * self.close_price.iloc[k]
+            return TMA_seires
+        else :
+            raise ValueError("All weights must lower than 1")
+
+    def WMA(self):
+        WMA_seires = pd.Series(range(self.num_days))
+        WMA_list = []
+        for k in range(self.num_days):
+            WMA_list.append(self.close_price.iloc[k] * (k+1))
+            WMA_seires.iloc[k] = np.cumsum(WMA_list[:k+1])[-1]/np.cumsum(range(k+2))[-1]
+        return WMA_seires
 
 
 if __name__ == '__main__':
@@ -62,4 +83,4 @@ if __name__ == '__main__':
                      0.257,
                      0.157]
     num_days = 5
-    print(MA_family(close_price, num_days ).DMA(turnover_rate))
+    print(MA_family(close_price, num_days ).WMA())
