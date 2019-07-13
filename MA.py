@@ -13,11 +13,9 @@ class MA_family ():
         return MA_seires
 
     def EMA(self):
-        import pandas as pd
-        assert num_days == self.close_price.shape[0]
         EMA_series = pd.Series(range(self.num_days))
         k = -1
-        for close_price in self.close_price:
+        for close_price in self.close_price.iloc[-self.num_days:]:
             if k == -1:
                 EMA = close_price
                 EMA_series.iloc[k + 1] = EMA
@@ -87,6 +85,20 @@ class MA_family ():
             WMA_list.append(self.close_price.iloc[k] * (k+1))
             WMA_seires.iloc[k] = np.cumsum(WMA_list[:k+1])[-1]/np.cumsum(range(k+2))[-1]
         return WMA_seires
+
+
+def DIF(close_price):
+    DIF_series = MA_family(close_price, 12).EMA() - MA_family(close_price, 26).EMA()
+    return DIF_series
+
+
+def DEA():
+    pass
+
+
+def MACD():
+    pass
+
 
 
 if __name__ == '__main__':
